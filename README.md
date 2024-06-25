@@ -9,7 +9,7 @@ Environmental requirements
 * Python 3.8.11
   
 ## 2 How to load the pre-trained model
-Download the pre-trained weight first!
+Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
 
 ## 3 Fine-tuning 
 ### Data preparation
