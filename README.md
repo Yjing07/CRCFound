@@ -1,7 +1,5 @@
 # CRCFound: A Colorectal Cancer CT Image Foundation Model Based on Self-Supervised Learning
 
-This repository includes an official implementation of paper:
-
 Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), and [huggingface](https://huggingface.co/).
 
 
