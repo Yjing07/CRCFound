@@ -12,7 +12,7 @@ Environmental requirements
 Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
 
 ## 3 Fine-tuning in your datasets
-### Data preparation
+### 3.1 Data preparation
 "img_idx":
 ```
 {"train":
@@ -29,8 +29,8 @@ Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_
 ...
 }
 ```
-### Start fine-tuning
-Download the pre-trained weight from Google Drive and specify pretrained_path in finetuning_1percent.sh.
+### 3.2 Start fine-tuning
+Download the pre-trained weight from Google Drive(https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) and specify pretrained_path in finetuning_1percent.sh.
 Start training by running
 ```
 python ./src/train_class.py
