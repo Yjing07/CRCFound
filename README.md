@@ -8,9 +8,13 @@ Environmental requirements
 * Ubuntu 18.04.5 LTS
 * Python 3.8.11
   
-## 2 How to load the pre-trained model
+## 2 Preparing and loading the model
 Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
 
+First create the 'checkpoints directory' inside the root of the repo:
+```
+mkdir -p checkpoints/
+```
 ## 3 Fine-tuning in your datasets
 ### 3.1 Data preparation
 "img_idx":
