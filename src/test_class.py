@@ -151,12 +151,10 @@ def main(args, logger):
         model.load_state_dict(weights_dict)
 
     model = model.cuda()
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
-    train_ind = img_idx_list[args.Fold]['train']
-    val_ind = img_idx_list[args.Fold]['val']
-    trainset = MAE_fusion_class(train_ind, args.data_path, lab_dict, args.shape)
+    img_idx_list = list(lab_dict.keys())
+    val_ind = img_idx_list[args.Fold]['validation']
+
     valset = MAE_fusion_class(val_ind, args.data_path, lab_dict, args.shape)
     val_loader = torch.utils.data.DataLoader(valset,
                                              batch_size=batch_size,
@@ -194,7 +192,6 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, default=0.0001)
     parser.add_argument('--shape', type=tuple, default=(32,256,256))
     parser.add_argument('--seed', default=42, type=int)
-    parser.add_argument('--Fold', type=int, default=0)
     parser.add_argument('--data_path', type=str, default="")
     parser.add_argument('--label_path', type=str, default="")
     parser.add_argument('--img_idx', type=str, default="/")

@@ -84,10 +84,9 @@ def main(args):
  
     model = model.cuda()
 
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
-    val_ind = img_idx_list[args.Fold]['Validation']+ img_idx_list[args.Fold]['Training']
+    img_idx_list = list(lab_dict.keys())
+    val_ind = img_idx_list[args.Fold]['Training'] + img_idx_list[args.Fold]['Validation']
     valset = KAD_Survival(val_ind, args.data_path, lab_dict, args.shape, args.task_name)
     val_loader = torch.utils.data.DataLoader(valset,
                                              batch_size=batch_size,
@@ -132,7 +131,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=4)
     parser.add_argument('--shape', type=tuple, default=(32,256,256))
     parser.add_argument('--seed', default=42, type=int)
-    parser.add_argument('--Fold', type=int, default=2)
     parser.add_argument('--task_name', type=str, default='dfs')
     parser.add_argument('--data_path', type=str, default="")
     parser.add_argument('--label_path', type=str, default="")

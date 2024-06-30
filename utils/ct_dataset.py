@@ -110,7 +110,6 @@ class MAE_class(Dataset):
     def __init__(self, img_ind, ct_data_path, lab_dict, size):
         super(MAE_class,self).__init__()
 
-        # self.images_idx = list(lab_dict.keys())
         self.img_list = img_ind
         self.images_idx = list(self.img_list.keys())
         self.ct_path = ct_data_path
@@ -121,8 +120,7 @@ class MAE_class(Dataset):
         return len(self.images_idx)
     
     def __getitem__(self, i):
-        # patient_id = self.images_idx[i]
-        # tumormin_id = self.all_label[patient_id]['tuominID']
+
         tumormin_id = self.images_idx[i]
         img_root = os.path.join(self.ct_path,'image', tumormin_id)
         roi_root = os.path.join(self.ct_path,'roi', tumormin_id)
@@ -131,13 +129,12 @@ class MAE_class(Dataset):
 
         img = sitk.GetArrayFromImage(img).astype(np.float32)
         roi = sitk.GetArrayFromImage(roi).astype(np.float32)
-        # img,roi = randomcrop(img,roi,self.size)
         img = torch.from_numpy(img)
         roi = torch.from_numpy(roi)
 
         label = self.img_list[tumormin_id]
         
-        return img,roi, label,tumormin_id  #,os.path.basename(self.images_ind[i])
+        return img,roi, label,tumormin_id
 
 class MAE_fusion_class(Dataset):
     """自定义数据集"""
@@ -150,14 +147,12 @@ class MAE_fusion_class(Dataset):
         self.ct_path = ct_data_path
         self.all_label = lab_dict
         self.size = size
-        self.text_embeddings = joblib.load('/data12/jing/MAE_pretrain/paitents_caption_embeddings1072.pkl')
+        self.text_embeddings = joblib.load('report_features.pkl')
 
     def __len__(self):
         return len(self.images_idx)
     
     def __getitem__(self, i):
-        # patient_id = self.images_idx[i]
-        # tumormin_id = self.all_label[patient_id]['tuominID']
         tumormin_id = self.images_idx[i]
         img_root = os.path.join(self.ct_path,'image', tumormin_id)
         roi_root = os.path.join(self.ct_path,'roi', tumormin_id)

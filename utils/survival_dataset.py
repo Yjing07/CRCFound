@@ -71,7 +71,7 @@ class Survival_fusion(Dataset):
         self.size = size
         self.task_name = task_name
         self.labels = np.array([self.all_label[i][f'{task_name}.event'] for i in self.images_idx])
-        self.text_embeddings = joblib.load('paitents_caption_embeddings1072.pkl')
+        self.text_embeddings = joblib.load('report_features.pkl')
 
     def __len__(self):
         return len(self.images_idx)
@@ -87,7 +87,6 @@ class Survival_fusion(Dataset):
 
         img = sitk.GetArrayFromImage(img).astype(np.float32)
         roi = sitk.GetArrayFromImage(roi).astype(np.float32)
-        # img,roi = randomcrop(img,roi,self.size)
         img = torch.from_numpy(img)
         roi = torch.from_numpy(roi)
         
@@ -99,8 +98,6 @@ class Survival_fusion(Dataset):
         else:
             text = torch.mean(text, dim=0)
 
-        # ct_caption = self.all_label[tumormin_id]['image_findings'][:510]
- 
         return img,roi, event, delay, text, tumormin_id  #,os.path.basename(self.images_ind[i])
 
 class BalancedBatchSampler(BatchSampler):

@@ -241,11 +241,10 @@ def main(args):
         if param.requires_grad:
             print(name)
 
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
-    train_ind = img_idx_list[args.Fold]['train']
-    val_ind = img_idx_list[args.Fold]['val']
+    img_idx_list = list(lab_dict.keys())
+    train_ind = img_idx_list[args.Fold]['training']
+    val_ind = img_idx_list[args.Fold]['validation']
     
     trainset = MAE_class(train_ind, args.data_path, lab_dict, args.shape)
     valset = MAE_class(val_ind, args.data_path, lab_dict, args.shape)
@@ -316,7 +315,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', type=str, default='mae')
     parser.add_argument('--vit', default=True, type=bool)
-    parser.add_argument('--pretrained', default='', type=str)
+    parser.add_argument('--checkpoint', default='', type=str)
     parser.add_argument('--num_classes', type=int, default=4)
     parser.add_argument('--evaluate', action='store_true')
     parser.add_argument('--scale', type=list, default=[1])
@@ -328,13 +327,10 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--lrf', type=float, default=0.1)
     parser.add_argument('--alpha', type=float, default=0.4)
-    parser.add_argument('--mask_ratio', default=0., type=float, help='mask ratio of pretrain')
-    parser.add_argument('--Fold', type=int, default=0)
     parser.add_argument('--data_path', type=str, default="")
     parser.add_argument('--label_path', type=str, default="")
-    parser.add_argument('--img_idx', type=str, default="")
     parser.add_argument('--log_path', type=str,
-                        default='./tnm_debug2',
+                        default='./log',
                         help='path to log')
     parser.add_argument('--freeze-layers', type=bool, default=False)
     parser.add_argument('--ver', type=str,

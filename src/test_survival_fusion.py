@@ -87,9 +87,8 @@ def main(args):
 
     model = model.cuda()
 
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
+    img_idx_list = list(lab_dict.keys())
     val_ind = img_idx_list[args.Fold]['Training'] + img_idx_list[args.Fold]['Validation']
     valset = Survival_fusion(val_ind, args.data_path, lab_dict, args.shape, args.task_name)
     val_loader = torch.utils.data.DataLoader(valset,

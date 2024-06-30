@@ -162,10 +162,9 @@ def main(args, logger):
 
     model = model.cuda()
   
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
-    val_ind = img_idx_list[args.Fold]['val']
+    img_idx_list = list(lab_dict.keys())
+    val_ind = img_idx_list['validation']
 
     valset = MAE_fusion_class(val_ind, args.data_path, lab_dict, args.shape)
 
@@ -207,8 +206,6 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--lrf', type=float, default=0.1)
     parser.add_argument('--alpha', type=float, default=0.4)
-    parser.add_argument('--mask_ratio', default=0., type=float, help='mask ratio of pretrain')
-    parser.add_argument('--Fold', type=int, default=1)
     parser.add_argument('--data_path', type=str, default="")
     parser.add_argument('--label_path', type=str, default="")
     parser.add_argument('--img_idx', type=str, default="")

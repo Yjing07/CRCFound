@@ -159,11 +159,10 @@ def main(args):
         if param.requires_grad:
             print(name)
 
-    args.Fold = 'Fold_' + str(args.Fold)
     lab_dict = read_json(args.label_path)
-    img_idx_list = read_json(args.img_idx)
-    train_ind = img_idx_list[args.Fold]['Training']
-    val_ind = img_idx_list[args.Fold]['Validation']
+    img_idx_list = list(lab_dict.keys())
+    train_ind = img_idx_list[args.Fold]['training']
+    val_ind = img_idx_list[args.Fold]['validation']
     
     trainset = Survival_fusion(train_ind, args.data_path, lab_dict, args.shape, args.task_name)
     valset = Survival_fusion(val_ind, args.data_path, lab_dict, args.shape, args.task_name)
@@ -249,8 +248,6 @@ if __name__ == '__main__':
     parser.add_argument('--loss_ratio', type=int, default=1)
     parser.add_argument('--alpha', type=float, default=0.4)
     parser.add_argument('--task_name', type=str, default='os')
-    parser.add_argument('--mask_ratio', default=0., type=float, help='mask ratio of pretrain')
-    parser.add_argument('--Fold', type=int, default=1)
     parser.add_argument('--data_path', type=str, default="")
     parser.add_argument('--label_path', type=str, default="")
     parser.add_argument('--img_idx', type=str, default="")
