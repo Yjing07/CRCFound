@@ -11,7 +11,7 @@ Environmental requirements
 ## 2 How to load the pre-trained model
 Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
 
-## 3 Fine-tuning 
+## 3 Fine-tuning in your datasets
 ### Data preparation
 "img_idx":
 ```
