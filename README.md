@@ -13,8 +13,7 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
   ```
   conda create -n CRCFound python=3.8.11 -y
   conda activate CRCFound
-  pip install --upgrade pip
-  pip install -e .
+  pip install -r requirements.txt
   ```
 ## 2 Preparing and loading the model
   Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
