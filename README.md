@@ -11,7 +11,7 @@ Environmental requirements
 ## 2 Preparing and loading the model
 Download the [pre-trained weight](https://drive.google.com/file/d/1zT6FsCh7RubL_k0LMGQwjhRMV90sprch/view?usp=sharing) first!
 
-First create the 'checkpoints directory' inside the root of the repo:
+First create the ==checkpoints directory== inside the root of the repo:
 ```
 mkdir -p checkpoints/
 ```
