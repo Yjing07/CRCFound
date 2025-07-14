@@ -109,10 +109,24 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
     model.to(device="cuda", dtype=torch.float16)
     model.eval()
    ```
- * 2.Encode images with MUSK (refer to demo.ipynb for complete implementation)
+ * 2.Encode images with CRCFound
    ```
-  conda create -n CRCFound python=3.8.11 -y
-  conda activate CRCFound
-  pip install -r requirements.txt
-  ```
+  import torch
+  import torchvision.transforms as transforms
+  import SimpleITK as sitk
+  
+  img_root = '' # TODO
+  img = sitk.ReadImage(img_root)
+  img = torch.from_numpy(sitk.GetArrayFromImage(img).astype(np.float32))
+  img_tensor = torch.unsqueeze(img,1)
+  
+  with torch.inference_mode():
+      image_embeddings = model(
+          image=img_tensor.to("cuda"),
+          with_head=False,      # skip classification head
+          out_norm=False,       # no final normalization
+          ms_aug=True,          # use multi-scale augmentation
+          return_global=True    # return global feature token
+      )[0]  # shape: [1, feature_dim]
+   ```
 
