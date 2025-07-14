@@ -106,8 +106,8 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
      print("Pretrained weights loaded successfully.")
    else:
      raise FileNotFoundError(f"Pretrained model not found at: {pretrained_path}")
-    model.to(device="cuda", dtype=torch.float16)
-    model.eval()
+  model.to(device="cuda", dtype=torch.float16)
+  model.eval()
    ```
 ### 2. Encode images with CRCFound
    ```
@@ -117,13 +117,10 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
    img_root = '' # TODO
    img = sitk.ReadImage(img_root)
    img = torch.from_numpy(sitk.GetArrayFromImage(img).astype(np.float32))
-   img_tensor = torch.unsqueeze(img,1)
+   img_tensor = img.unsqueeze(0).unsqueeze(0)
    with torch.inference_mode():
      image_embeddings = model(
           image=img_tensor.to("cuda"),
-          with_head=False,      # skip classification head
-          out_norm=False,       # no final normalization
-          ms_aug=True,          # use multi-scale augmentation
           return_global=True    # return global feature token
       )[0]  # shape: [1, feature_dim]
    ```
