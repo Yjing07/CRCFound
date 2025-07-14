@@ -108,7 +108,6 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
       raise FileNotFoundError(f"Pretrained model not found at: {pretrained_path}")
     model.to(device="cuda", dtype=torch.float16)
     model.eval()
-
   ```
  * 2.Encode images with MUSK (refer to demo.ipynb for complete implementation)
    ```
