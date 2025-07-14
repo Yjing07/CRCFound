@@ -111,17 +111,15 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
    ```
  * 2.Encode images with CRCFound
    ```
-  import torch
-  import torchvision.transforms as transforms
-  import SimpleITK as sitk
-  
-  img_root = '' # TODO
-  img = sitk.ReadImage(img_root)
-  img = torch.from_numpy(sitk.GetArrayFromImage(img).astype(np.float32))
-  img_tensor = torch.unsqueeze(img,1)
-  
-  with torch.inference_mode():
-      image_embeddings = model(
+   import torch
+   import SimpleITK as sitk
+
+   img_root = '' # TODO
+   img = sitk.ReadImage(img_root)
+   img = torch.from_numpy(sitk.GetArrayFromImage(img).astype(np.float32))
+   img_tensor = torch.unsqueeze(img,1)
+   with torch.inference_mode():
+     image_embeddings = model(
           image=img_tensor.to("cuda"),
           with_head=False,      # skip classification head
           out_norm=False,       # no final normalization
@@ -129,4 +127,5 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
           return_global=True    # return global feature token
       )[0]  # shape: [1, feature_dim]
    ```
+   
 
