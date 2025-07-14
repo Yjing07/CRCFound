@@ -113,6 +113,7 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
    ```
    import torch
    import SimpleITK as sitk
+   import numpy as np
 
    img_root = '' # TODO
    img = sitk.ReadImage(img_root)
