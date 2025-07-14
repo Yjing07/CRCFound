@@ -86,7 +86,7 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
   ```
 
 ## Basic Usage: CRCFound as a Vision Encoder
- * 1.Load the CRCFound model
+ ### 1. Load the CRCFound model
    ```
    import torch
    import os
@@ -109,7 +109,7 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
     model.to(device="cuda", dtype=torch.float16)
     model.eval()
    ```
- * 2.Encode images with CRCFound
+### 2. Encode images with CRCFound
    ```
    import torch
    import SimpleITK as sitk
