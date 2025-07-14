@@ -83,5 +83,9 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
 * Start training
   ```
   python ./src/train_class_fusion.py --model_name mae --checkpoint checkpoints/checkpoint-999.pth --epochs 200 --batch_size 8 --lr 0.0001 --shape (32,256,256) -- data_path ${IMAGE_DIR}$ --label_path $LABELS DIR$ --log_path ./logs 
-  ```  
+  ```
+
+  ## Basic Usage: CRCFound as a Vision Encoder
+ * 1.Load the CRCFound model
+ * 2.Encode images with MUSK (refer to demo.ipynb for complete implementation)
 
