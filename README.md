@@ -88,27 +88,27 @@ Some code is borrowed from [MAE](https://github.com/facebookresearch/mae), [Chat
 ## Basic Usage: CRCFound as a Vision Encoder
  * 1.Load the CRCFound model
    ```
-  import torch
-  import os
-  from lib.vit_pretrain import ViT
+   import torch
+   import os
+   from lib.vit_pretrain import ViT
 
-  model = ViT("CRCFound_large_patch16_256")
-  pretrained_path = 'checkpoints/checkpoint-999.pth'  # TODO
-  if os.path.isfile(pretrained_path):
-    print(f"Loading pretrained weights from: {pretrained_path}")
-    checkpoint = torch.load(pretrained_path, map_location='cpu')
-    pretrained_weights = checkpoint.get('model', checkpoint) 
-    cleaned_weights = {k.replace("module.", ""): v for k, v in pretrained_weights.items()}
-    compatible_weights = {k: v for k, v in cleaned_weights.items() if k in model.state_dict()}
-    model.load_state_dict(
-        {**model.state_dict(), **compatible_weights}
-    )
-    print("Pretrained weights loaded successfully.")
-  else:
-      raise FileNotFoundError(f"Pretrained model not found at: {pretrained_path}")
+   model = ViT("CRCFound_large_patch16_256")
+   pretrained_path = 'checkpoints/checkpoint-999.pth'  # TODO
+   if os.path.isfile(pretrained_path):
+     print(f"Loading pretrained weights from: {pretrained_path}")
+     checkpoint = torch.load(pretrained_path, map_location='cpu')
+     pretrained_weights = checkpoint.get('model', checkpoint) 
+     cleaned_weights = {k.replace("module.", ""): v for k, v in pretrained_weights.items()}
+     compatible_weights = {k: v for k, v in cleaned_weights.items() if k in model.state_dict()}
+     model.load_state_dict(
+          {**model.state_dict(), **compatible_weights}
+      )
+     print("Pretrained weights loaded successfully.")
+   else:
+     raise FileNotFoundError(f"Pretrained model not found at: {pretrained_path}")
     model.to(device="cuda", dtype=torch.float16)
     model.eval()
-  ```
+   ```
  * 2.Encode images with MUSK (refer to demo.ipynb for complete implementation)
    ```
   conda create -n CRCFound python=3.8.11 -y
