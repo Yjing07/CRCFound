@@ -110,7 +110,7 @@ def evaluate(model, data_loader, args, logger,flag=0):
         pred_all = []
         label_all = []
         all_patient_id = []
-        all_features = []
+        
         for step, data in enumerate(data_loader):
             images,rois, text, label, patient_id = data
             for i in patient_id:
@@ -122,13 +122,12 @@ def evaluate(model, data_loader, args, logger,flag=0):
             else:
                 images = images
             pred, _features = model(images, text, rois)
-            all_features.append(_features)
             pred_all.extend(F.softmax(pred.detach(),dim=-1).cpu().numpy())
             label_all.extend(list(label.cpu().numpy()))
 
     c_m, auc_value, class_auc_list, accuracy, precision, recall, fscore, val_dict = five_scores(label_all, pred_all, args.num_classes, args.log_dir, all_patient_id,logger,flag)
 
-    return c_m, auc_value, class_auc_list, accuracy, precision, recall, fscore, np.concatenate(all_features, axis=0), val_dict
+    return c_m, auc_value, class_auc_list, accuracy, precision, recall, fscore, val_dict
 
 
 
@@ -177,7 +176,7 @@ def main(args, logger):
                                              )
     
     print("Creating model")
-    val_c_m, val_auc, val_auc_list, val_accuracy, val_precision, val_recall, val_fscore, val_features, val_dict = evaluate(model=model, data_loader=val_loader, args=args, logger=logger, flag=1)
+    val_c_m, val_auc, val_auc_list, val_accuracy, val_precision, val_recall, val_fscore, val_dict = evaluate(model=model, data_loader=val_loader, args=args, logger=logger, flag=1)
 
     all_dict ={}
     all_dict['label'] = val_dict['label']

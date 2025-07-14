@@ -13,7 +13,7 @@ import argparse
 from utils.survival_dataset import KAD_Survival
 from utils.utils import read_json
 from lib.vit_ct import ViT
-
+from utils.metrics import concordance_index_torch
 
 def bucketize(a: torch.Tensor, ids: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
     mapping = {k.item(): v.item() for k, v in zip(a, ids)}
@@ -40,9 +40,7 @@ def evaluate_c_index(model, data_loader, device, args):
         images,rois, event, delay, ids = data
 
         images = torch.unsqueeze(images,1).to(torch.float32).cuda()
-        rois = torch.unsqueeze(rois,1).to(torch.float32).cuda()
-        # images = torch.cat([images,rois],1)
-        pred = model(images,rois)
+        pred = model(images)
 
         pred_all.extend(-pred)
         True_pred.extend(pred)

@@ -366,7 +366,7 @@ class ViT(nn.Module):
         loss = self.forward_loss(input, pred, mask)
         return loss, pred, mask
 
-    
+
 def interpolate_pos_embed(pos_embed_checkpoint, visual_encoder):        
     # interpolate position embedding
     embedding_size = pos_embed_checkpoint.shape[-1]

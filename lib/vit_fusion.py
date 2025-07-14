@@ -148,13 +148,11 @@ class Block(nn.Module):
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(in_features=dim, hidden_features=mlp_hidden_dim, act_layer=act_layer, drop=drop)
-        # self.adapter = Adapter_Layer(dim, dim)
+        self.adapter = Adapter_Layer(dim, dim)
 
-    def forward(self, x, mask):
+    def forward(self, x):
         x = x + self.drop_path(self.attn(self.norm1(x)))
-        x = x + self.drop_path(self.mlp(self.norm2(x)))
-        # x = x + self.drop_path(self.adapter(self.mlp(self.norm2(x))))
-        # x = x + x *mask
+        x = x + self.drop_path(self.adapter(self.mlp(self.norm2(x))))
         return x
     
 class FeedForward(nn.Module):
@@ -249,63 +247,29 @@ class ViT(nn.Module):
 
         self.pool = pool
         self.to_latent = nn.Identity()
-        # self.norm = nn.LayerNorm(dim)
-
-        # self.head = nn.Sequential(
-        #     # nn.LayerNorm(dim),
-        #     nn.Linear(dim, num_classes) if num_classes > 0 else nn.Identity()
-        # )
-        # --------------------------------------------------------------------------
-
-        # --------------------------------------------------------------------------
-        # MAE decoder specifics
-        # self.decoder_embed = nn.Linear(dim, decoder_embed_dim, bias=True)
-
-        # self.mask_token = nn.Parameter(torch.zeros(1, 1, decoder_embed_dim))
-
-        # self.decoder_pos_embed = nn.Parameter(torch.zeros(1, num_patches + 1, decoder_embed_dim), requires_grad=False)  # fixed sin-cos embedding
-
-        # # self.decoder_blocks = Transformer(decoder_embed_dim, decoder_depth, decoder_num_heads, dim_head, mlp_dim, dropout)
-        # self.decoder_blocks = nn.ModuleList([
-        #     Block(decoder_embed_dim, decoder_num_heads, mlp_ratio, qkv_bias=True, qk_scale=None, norm_layer=norm_layer)
-        #     for i in range(decoder_depth)])
-        
-        # self.decoder_norm = norm_layer(decoder_embed_dim)
-        # self.decoder_pred = nn.Linear(decoder_embed_dim, image_patch_size**2 * frame_patch_size * channels, bias=True) # decoder to patch
 
         self.mlp_head = nn.Sequential(
             nn.Linear(dim, num_classes)
         )
 
-    def forward_encoder(self, input, rois):
-        input = input + input * rois
+    def forward_encoder(self, input):
         x = self.patch_embed(input)
-        mask = self.patch_embed(rois)
         b, n, _ = x.shape
-        # add pos embed w/o cls token
         x += self.pos_embedding[:, 1:,:]
-
-        # append cls token
         cls_token = self.cls_token + self.pos_embedding[:, :1, :]
         cls_tokens = cls_token.expand(x.shape[0], -1, -1)
-        # cls_tokens = repeat(self.cls_token, '1 1 d -> b 1 d', b = b)
         x = torch.cat((cls_tokens, x), dim=1)
-        mask = torch.cat((cls_tokens, mask), dim=1)
-        # x = self.dropout(x)
 
         for blocks in self.blocks:
-            x = blocks(x, mask)
+            x = blocks(x)
         x = self.norm(x)
-
         return x
-    #     
-    
-    def forward(self, input, rois):
-        latent = self.forward_encoder(input, rois)
-        # x = latent.mean(dim = 1) if self.pool == 'mean' else latent[:, 0]
-        # x = self.to_latent(x)
-        # return self.mlp_head(x)
-        return latent[:,0]
+
+    def forward(self, input):
+        latent = self.forward_encoder(input)
+        x = latent.mean(dim = 1) if self.pool == 'mean' else latent[:, 0]
+        x = self.to_latent(x)
+        return self.mlp_head(x)
 
     
 def interpolate_pos_embed(pos_embed_checkpoint, visual_encoder):        

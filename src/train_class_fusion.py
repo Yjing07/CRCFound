@@ -153,7 +153,7 @@ def evaluate(model, data_loader, args,flag=0):
                 images = torch.cat([images,rois],1)
             else:
                 images = images
-            pred = model(images,rois, text)
+            pred = model(images, text)
             pred_all.extend(F.softmax(pred.detach(),dim=-1).cpu().numpy())
             label_all.extend(list(label.cpu().numpy()))
 
@@ -174,7 +174,7 @@ def train_one_epoch(model, optimizer, data_loader, loss_fn, epoch, writer,args):
             images = torch.cat([images,rois],1)
         else:
             images = images
-        pred = model(images, rois, text)
+        pred = model(images, text)
         loss = loss_fn(pred, label)
         optimizer.zero_grad()
         loss.backward()

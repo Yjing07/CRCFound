@@ -5,7 +5,7 @@ from einops import rearrange, repeat
 from einops.layers.torch import Rearrange
 import torch.nn.functional as F
 from timm.models.layers import drop_path, to_2tuple, trunc_normal_
-from model.pos_embed import get_2d_sincos_pos_embed
+from lib.pos_embed import get_2d_sincos_pos_embed
 import math
 # helpers
 
@@ -151,15 +151,11 @@ class Block(nn.Module):
         self.norm2 = norm_layer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
         self.mlp = Mlp(in_features=dim, hidden_features=mlp_hidden_dim, act_layer=act_layer, drop=drop)
-        # self.adapter = Adapter_Layer(dim, dim)
+        self.adapter = Adapter_Layer(dim, dim)
 
-    def forward(self, x, mask):
-        # _x = x[:,1:, :] + x[:,1:, :] * mask
-        # x = torch.cat((x[:,:1,:], _x), dim=1)
-        # x = x + x *mask
+    def forward(self, x):
         x = x + self.drop_path(self.attn(self.norm1(x)))
-        x = x + self.drop_path(self.mlp(self.norm2(x)))
-        # x = x + self.drop_path(self.adapter(self.mlp(self.norm2(x))))
+        x = x + self.drop_path(self.adapter(self.mlp(self.norm2(x))))
         
         return x
     
@@ -221,8 +217,8 @@ class Transformer(nn.Module):
         return x
 
 class ViT(nn.Module):
-    def __init__(self, *, image_size=256, image_patch_size=16, frames=16, frame_patch_size=2, num_classes=1, dim=1024, depth=6, heads=8,
-                 pool = 'cls', channels = 1, emb_dropout = 0.,
+    def __init__(self, *, image_size=256, image_patch_size=16, frames=32, frame_patch_size=16, num_classes=1, dim=1024, depth=6, heads=8,
+                 pool = 'cls', channels = 1, emb_dropout = 0.1,
             norm_layer=nn.LayerNorm,
             mlp_ratio=4.,
             drop_path_rate=0.):
@@ -234,6 +230,7 @@ class ViT(nn.Module):
         assert frames % frame_patch_size == 0, 'Frames must be divisible by frame patch size'
 
         num_patches = (image_height // patch_height) * (image_width // patch_width) * (frames // frame_patch_size)
+        # print((image_height // patch_height), (image_width // patch_width), (frames // frame_patch_size))
         patch_dim = channels * patch_height * patch_width * frame_patch_size
         self.patch_dim = image_patch_size
         self.frame_patch_size = frame_patch_size
@@ -261,30 +258,43 @@ class ViT(nn.Module):
         )
 
 
-    def forward_encoder(self, input, rois):
-        input = input + input * rois
+    def forward_encoder(self, input):
         x = self.patch_embed(input)
-        mask = self.patch_embed(rois)
         b, n, _ = x.shape
         x += self.pos_embedding[:, 1:,:]
         cls_token = self.cls_token + self.pos_embedding[:, :1, :]
         cls_tokens = cls_token.expand(x.shape[0], -1, -1)
         x = torch.cat((cls_tokens, x), dim=1)
-        mask = torch.cat((cls_tokens, mask), dim=1)
-
         for blocks in self.blocks:
-            x = blocks(x, mask)
+            x = blocks(x)
         x = self.norm(x)
 
         return x
  
-    def forward(self, input, rois):
-        latent = self.forward_encoder(input, rois)
-        x = latent.mean(dim = 1) if self.pool == 'mean' else latent[:, 0]
-        x = self.to_latent(x)
-        return self.mlp_head(x)
+    def forward(self, input, return_global=False):
+        if return_global:
+            latent = self.forward_encoder(input)
+            return latent
+        else:
+            latent = self.forward_encoder(input)
+            x = latent.mean(dim = 1) if self.pool == 'mean' else latent[:, 0]
+            x = self.to_latent(x)
+            return self.mlp_head(x)
 
+def CRC_model(model_name):
+    assert model_name == 'CRCFound_large_patch16_256'
+    model = ViT(
+        image_size = 256,          # image size
+        frames = 32,               # number of frames
+        image_patch_size = 16,     # image patch size
+        frame_patch_size = 16,      # frame patch size
+        num_classes = 2,
+        dim = 1024,
+        depth = 24,
+        heads = 16)
     
+    return model
+
 def interpolate_pos_embed(pos_embed_checkpoint, visual_encoder):        
     # interpolate position embedding
     embedding_size = pos_embed_checkpoint.shape[-1]

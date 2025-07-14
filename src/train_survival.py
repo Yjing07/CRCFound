@@ -47,9 +47,7 @@ def evaluate_c_index(model, data_loader, device, args):
         images,rois, event, delay, ids = data
 
         images = torch.unsqueeze(images,1).to(torch.float32).cuda()
-        rois = torch.unsqueeze(rois,1).to(torch.float32).cuda()
-        # images = torch.cat([images,rois],1)
-        pred = model(images,rois)
+        pred = model(images)
 
         pred_all.extend(-pred)
         event_all.extend(event.cuda())
@@ -70,9 +68,7 @@ def train_one_epoch(model, optimizer, data_loader, device, epoch,writer,args):
     for step, data in enumerate(data_loader):
         images,rois, event, delay, ids = data
         images = torch.unsqueeze(images,1).to(torch.float32).cuda()
-        rois = torch.unsqueeze(rois,1).to(torch.float32).cuda()
-        # images = torch.cat([images,rois],1)
-        pred = model(images,rois)
+        pred = model(images)
 
         pred_all.extend(pred)
         event_all.extend(event.cuda())

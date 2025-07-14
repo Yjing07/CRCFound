@@ -146,13 +146,12 @@ def evaluate(model, data_loader, args,flag=0):
             for i in patient_id:
                 all_patient_id.append(i)
             images = torch.unsqueeze(images,1).to(torch.float32).cuda()
-            rois = torch.unsqueeze(rois,1).to(torch.float32).cuda()
             if args.model_name=='resnet18_fe':
                 images = torch.cat([images,rois],1)
                 pred = model(images)
             else:
                 images = images
-                pred = model(images,rois)
+                pred = model(images)
 
             pred_all.extend(F.softmax(pred.detach(),dim=-1).cpu().numpy())
             label_all.extend(list(label.cpu().numpy()))
@@ -167,13 +166,11 @@ def train_one_epoch(model, optimizer, data_loader, loss_fn, epoch, writer,args):
 
     for step, data in enumerate(data_loader):
         images,rois, label,_ = data
-        # if len(label.unique())==1:
-        #     continue
         images = torch.unsqueeze(images,1).to(torch.float32).cuda()
-        rois = torch.unsqueeze(rois,1).to(torch.float32).cuda()
+
         label = label.cuda()
         images = images
-        pred = model(images, rois)
+        pred = model(images)
         loss = loss_fn(pred, label)
 
         optimizer.zero_grad()

@@ -42,8 +42,7 @@ def evaluate_c_index(model, data_loader, val_ind, lab_dict,  device, args):
     for step, data in enumerate(data_loader):
         img,roi, event, delay, text_caption, ids = data
         images = torch.unsqueeze(img,1).to(torch.float32).cuda()
-        rois = torch.unsqueeze(roi,1).to(torch.float32).cuda()
-        pred = model(images,rois,text_caption)
+        pred = model(images,text_caption)
 
         pred_all.extend(-pred)
         True_pred.extend(pred)
